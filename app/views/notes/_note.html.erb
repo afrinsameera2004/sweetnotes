@@ -1,0 +1,22 @@
+
+<div id="<%= dom_id note %>" class="w-full sm:w-auto my-5 space-y-5">
+  <!-- Title -->
+  <div>
+    <strong class="block font-medium mb-1">Title:</strong>
+    <p><%= note.title %></p>
+  </div>
+
+  <!-- Content -->
+  <div>
+    <strong class="block font-medium mb-1">Content:</strong>
+    <div class="prose max-w-none">
+      <%= sanitize note.content, tags: %w(p br strong em a img ul ol li blockquote h1 h2 h3 h4 h5 h6), attributes: %w(src href alt title style) %>
+    </div>
+  </div>
+
+  <!-- User -->
+  <div>
+    <strong class="block font-medium mb-1">User:</strong>
+    <p><%= note.user_id %></p>
+  </div>
+</div>

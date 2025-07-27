@@ -1,0 +1,66 @@
+
+<% content_for :title, "Showing note" %>
+
+<div class="md:w-2/3 w-full space-y-6">
+
+  <h1 class="font-bold text-4xl text-gray-800 flex items-center gap-2">
+    Showing note
+    <% if @note.important? %>
+      <span class="text-yellow-500 text-2xl" title="Important">⭐</span>
+    <% end %>
+  </h1> 
+
+
+  <div class="prose max-w-full prose-p:my-1 prose-table:border prose-th:border prose-td:border">
+    <%= sanitize(
+          @note.content,
+          tags: %w(p br strong em a ul ol li table thead tbody tr td th h1 h2 h3 h4 h5 h6 img span div blockquote del),
+          attributes: %w(src href alt title style class)
+        ) %>
+  </div>
+
+
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-2 sm:space-y-0">
+    <%= link_to "Edit this note", edit_note_path(@note), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 font-medium" %>
+    <%= link_to "Back to notes", notes_path, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 font-medium" %>
+    <%= button_to "Destroy this note", @note, method: :delete,
+          form_class: "sm:inline-block", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer",
+          data: { turbo_confirm: "Are you sure?" } %>
+  </div>
+
+  <% if @note.files.attached? %>
+    <h3 class="text-sm font-semibold mt-6">Attachments:</h3>
+    <ul class="list-disc pl-5">
+      <% @note.files.each do |file| %>
+        <li>
+          <%= link_to file.filename.to_s, url_for(file), target: "_blank", class: "text-pink-600 underline" %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <hr class="my-6">
+
+  <h3 class="text-lg font-semibold mt-6 mb-2">Share this note</h3>
+  <%= form_with url: share_note_path(@note), method: :post, local: true do %>
+    <div>
+      <%= label_tag :email, "Email to share with:" %>
+      <%= text_field_tag :email, "", required: true, class: "mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" %>
+    </div>
+
+    <div class="mt-2">
+      <%= label_tag :can_edit, "Allow editing?" %>
+      <%= check_box_tag :can_edit, "1" %>
+    </div>
+
+    <div class="mt-4">
+      <%= submit_tag "Share", class: "bg-pink-500 text-white px-4 py-2 rounded" %>
+    </div>
+  <% end %>
+
+  <% if @note.archived? %>
+    <span class="inline-block mt-4 bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs font-medium">Archived</span>
+  <% end %>
+
+</div>

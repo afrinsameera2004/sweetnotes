@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tag-badge {
+  background-color: #f9d8ec;
+  color: #b83280;
+  padding: 2px 8px;
+  margin: 2px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+}

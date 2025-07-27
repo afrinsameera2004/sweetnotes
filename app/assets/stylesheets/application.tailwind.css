@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Add Tailwind Typography plugin if not already */
+@import "@tailwindcss/typography";
+
+
+<img src="..." style="max-height:100px; width:auto;">

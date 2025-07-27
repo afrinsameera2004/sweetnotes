@@ -1,0 +1,139 @@
+
+<% content_for :title, "Notes" %>
+
+<div class="w-full max-w-6xl mx-auto px-4">
+
+  <!-- ✅ Title + Search + New Note -->
+  <div class="mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <h1 class="text-3xl font-bold text-gray-800">Your Notes</h1>
+      <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+        <%= form_with url: notes_path, method: :get, local: true, class: "flex gap-2 w-full sm:w-auto" do |f| %>
+          <%= f.text_field :search, value: params[:search], placeholder: "Search notes...",
+            class: "w-full sm:w-auto rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:ring-pink-500 focus:border-pink-500" %>
+          <%= f.submit "Search", class: "bg-pink-500 hover:bg-pink-600 text-white font-medium px-4 py-2 rounded-md shadow" %>
+        <% end %>
+        <%= link_to "New Note", new_note_path,
+            class: "whitespace-nowrap bg-pink-500 hover:bg-pink-600 text-white font-medium px-4 py-2 rounded-md shadow" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Filter by Tag + Archived Button in One Line -->
+  <% all_tags = current_user.notes.map(&:tag_array).flatten.uniq.reject(&:blank?) %>
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-wrap items-center gap-3">
+      <h4 class="font-semibold text-gray-800">Filter by Tag</h4>
+      <%= form_with url: notes_path, method: :get, local: true do |f| %>
+        <select name="tag" onchange="this.form.submit()" class="rounded-md border-gray-300 shadow-sm focus:ring-pink-500 focus:border-pink-500 text-sm px-3 py-2">
+          <option value="">-- Select Tag --</option>
+          <% all_tags.each do |tag| %>
+            <option value="<%= tag %>" <%= "selected" if params[:tag] == tag %>><%= tag.capitalize %></option>
+          <% end %>
+        </select>
+      <% end %>
+      <% if params[:tag].present? %>
+        <%= link_to "Clear", notes_path, class: "text-red-500 text-sm underline" %>
+      <% end %>
+    </div>
+
+    <%= link_to "View Archived Notes", archived_notes_path,
+        class: "bg-gray-200 hover:bg-gray-300 text-sm text-gray-800 px-4 py-2 rounded-md shadow" %>
+  </div>
+
+  <% if @notes&.any? %>
+    <div class="space-y-4">
+      <% @notes.each do |note| %>
+        <div class="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-pink-600 flex items-center gap-2">
+              <%= note.title %>
+              <% if note.important? %>
+                <span title="Important" class="text-yellow-500">⭐</span>
+              <% end %>
+            </h2>
+
+            <% if note.priority.present? %>
+              <% normalized_priority = note.priority.to_s.strip.downcase %>
+              <% priority_color = case normalized_priority
+                when "high" then "bg-red-100 text-red-800"
+                when "medium" then "bg-gray-100 text-gray-800"
+                when "low" then "bg-green-100 text-green-800"
+                else "bg-gray-100 text-gray-800"
+              end %>
+              <span class="inline-block text-xs font-semibold px-2 py-1 rounded mt-1 <%= priority_color %>">
+                <%= normalized_priority.capitalize %> Priority
+              </span>
+            <% end %>
+
+            <% if note.category.present? %>
+              <% category_color = case note.category.downcase
+                when "work" then "bg-blue-100 text-blue-800"
+                when "personal" then "bg-purple-100 text-purple-800"
+                when "ideas" then "bg-green-100 text-green-800"
+                when "tasks" then "bg-yellow-100 text-yellow-800"
+                else "bg-gray-200 text-gray-800"
+              end %>
+              <span class="inline-block text-xs font-semibold px-2 py-1 rounded mt-1 <%= category_color %>">
+                <%= note.category.capitalize %>
+              </span>
+            <% end %>
+
+            <div class="text-gray-600 mt-2 prose max-w-none">
+              <%= sanitize(
+                    truncate(note.content.to_s.html_safe, length: 300, escape: false),
+                    tags: %w(p br strong em a img ul ol li blockquote h1 h2 h3 h4 h5 h6 span),
+                    attributes: %w(src href alt title style class)
+                  )
+              %>
+            </div>
+
+            
+
+            <% if note.tags.present? %>
+              <p class="mt-2 text-sm text-gray-500">
+                <strong>Tags:</strong>
+                <% note.tag_array.each do |tag| %>
+                  <span class="inline-block bg-pink-100 text-pink-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
+                    <%= tag %>
+                  </span>
+                <% end %>
+              </p>
+            <% end %>
+          </div>
+
+          
+
+          <div class="flex flex-wrap gap-2">
+            <%= link_to "Show", note, class: "bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm font-medium" %>
+            <%= link_to "Edit", edit_note_path(note), class: "bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md text-sm font-medium" %>
+            <%= button_to "Destroy", note, method: :delete, data: { turbo_confirm: "Are you sure?" },
+                class: "bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-medium" %>
+
+            <% unless note.archived? %>
+              <%= button_to "Archive", archive_note_path(note), method: :patch,
+                data: { turbo_confirm: "Are you sure you want to archive this note?" },
+                class: "bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-medium" %>
+            <% end %>
+
+            <% if note.archived? %>
+              <%= button_to "Unarchive", unarchive_note_path(note), method: :patch,
+                  data: { turbo_confirm: "Unarchive this note?" },
+                  class: "bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-medium" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="pagination-links mt-6 text-center">
+        <%= paginate @notes %>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center text-gray-500 mt-16">
+      <p class="text-lg">📝 You have no notes yet.</p>
+      <%= link_to "Create your first note", new_note_path,
+          class: "mt-4 inline-block bg-pink-500 hover:bg-pink-600 text-white font-medium px-5 py-2 rounded-md shadow" %>
+    </div>
+  <% end %>
+</div>

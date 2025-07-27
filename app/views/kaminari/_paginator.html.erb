@@ -1,0 +1,24 @@
+
+<div class="w-full mt-8 flex justify-center">
+  <nav aria-label="Pagination Navigation">
+    <ul class="flex flex-wrap items-center justify-center gap-2">
+      <% paginator.each_page do |page| %>
+        <% if page.left_outer? || page.right_outer? || page.inside_window? %>
+          <% if page.current? %>
+            <li>
+              <span class="bg-pink-500 text-white px-4 py-2 rounded-md border border-pink-500 shadow-sm min-w-[40px] text-center inline-block">
+                <%= page.number %>
+              </span>
+            </li>
+          <% else %>
+            <li>
+              <%= link_to page.number, url_for(page: page.number), class: "bg-white text-pink-600 border border-pink-300 px-4 py-2 rounded-md hover:bg-pink-100 shadow-sm min-w-[40px] text-center inline-block" %>
+            </li>
+          <% end %>
+        <% elsif !page.was_truncated? %>
+          <li><span class="text-gray-400 px-4 py-2 inline-block">…</span></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </nav>
+</div>

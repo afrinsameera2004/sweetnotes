@@ -1,0 +1,28 @@
+
+<div class="min-h-screen bg-pink-50 flex flex-col justify-center items-center text-center px-6 py-12">
+  <h1 class="text-5xl sm:text-7xl font-bold fancy text-pink-600 mb-6 drop-shadow-lg">
+    SweetNotes 🍓
+  </h1>
+
+  <p class="text-lg sm:text-xl text-gray-700 mb-4 max-w-2xl">
+    A safe, cute, and colorful space to capture your thoughts, ideas, and secrets.
+  </p>
+  <p class="text-md sm:text-lg text-gray-600 mb-8 max-w-2xl">
+    Whether it’s your daily journal, study notes, creative ideas, or a secret crush 💖 — 
+    SweetNotes helps you keep everything organized and private, all in one place.
+  </p>
+
+
+ 
+
+  <!-- ✅ Call to Action Buttons -->
+  <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-12">
+    <%= link_to "Start Writing →", new_note_path, class: "bg-pink-500 hover:bg-pink-600 text-white text-lg font-semibold px-6 py-3 rounded-full shadow-lg transition duration-300" %>
+    <%= link_to "Go to Notes", notes_path, class: "bg-pink-500 hover:bg-pink-600 text-white text-lg font-semibold px-6 py-3 rounded-full shadow-lg transition duration-300" %>
+  </div>
+
+  <!-- ✅ Footer -->
+  <p class="text-sm text-gray-500 mt-6">
+    Made with 💖 by Afrin Sameera
+  </p>
+</div>

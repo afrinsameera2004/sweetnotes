@@ -1,0 +1,15 @@
+
+<h2>Hello!</h2>
+
+<p><%= @shared_note.user.email %> has shared a note with you on SweetNotes.</p>
+
+<p>
+  <strong>Title:</strong> <%= @note.title %><br>
+  <strong>Content:</strong> <%= truncate(@note.content, length: 100) %>
+</p>
+
+<p>
+  <%= link_to "View Note", @url %>
+</p>
+
+<p>Thanks,<br>SweetNotes Team</p>
